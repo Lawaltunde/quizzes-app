@@ -7,12 +7,14 @@ public class Question {
     private int id;
     private String question;
     private String[] options;
+    private String answer;
 
-    public Question(int id, String question, String[] options)
+    public Question(int id, String question, String[] options, String answer)
     {
         this.id = id;
         this.question = question;
         this.options = options;
+        this.answer = answer;
     }
 
     public int getId() {
@@ -38,17 +40,24 @@ public class Question {
     public void setOptions(String[] options) {
         this.options = options;
     }
+    public String getAnswer() {
+        return answer;
+    }
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Question question1 = (Question) o;
-        return id == question1.id && Objects.equals(question, question1.question) && Objects.deepEquals(options, question1.options);
+        return id == question1.id && Objects.equals(question, question1.question) && Objects.deepEquals(options, question1.options) && Objects.equals(answer, question1.answer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, question, Arrays.hashCode(options));
+        return Objects.hash(id, question, Arrays.hashCode(options), answer);
     }
 
     @Override
@@ -57,6 +66,7 @@ public class Question {
                 "id=" + id +
                 ", question='" + question + '\'' +
                 ", options=" + Arrays.toString(options) +
+                ", answer='" + answer + '\'' +
                 '}';
     }
 }
