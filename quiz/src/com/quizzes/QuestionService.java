@@ -6,6 +6,8 @@ import java.util.Scanner;
 public class QuestionService {
     private QuestionDAO questionDAO;
     private String[] answers;
+    // reuse one scanner for System.in; do not close it
+    private final Scanner sc = new Scanner(System.in);
 
     {
         questionDAO = new QuestionDAO();
@@ -26,45 +28,48 @@ public class QuestionService {
         }
 
         int index = 0, correctAnswers = 0;
-        Scanner sc = new Scanner(System.in);
-        try {
-            for(Question q : questions){
-                if (q == null) continue; // skip null slots (if any)
+        for(Question q : questions){
+            if (q == null) continue; // skip null slots (if any)
 
-                System.out.println("-------------------------");
-                System.out.println("Question: " + q.getId());
-                System.out.println(q.getQuestion());
-                System.out.println("Options: " + Arrays.toString(q.getOptions()));
-                System.out.print("Your Answer: ");
+            System.out.println("-------------------------");
+            System.out.println("Question: " + q.getId());
+            System.out.println(q.getQuestion());
+            System.out.println("Options: " + Arrays.toString(q.getOptions()));
+            System.out.print("Your Answer: ");
 
-                String userAnswer = sc.nextLine();
-                if (userAnswer == null) userAnswer = "";
-                userAnswer = userAnswer.trim();
-
-                // Map single-letter answers (A/B/C/...) to the corresponding option text if possible
-                String selectedText = mapLetterToOption(userAnswer, q.getOptions());
-                if (selectedText == null || selectedText.isEmpty()) {
-                    // user may have typed the full option (e.g., "Paris") or the full "A. Paris"
-                    selectedText = userAnswer;
-                }
-
-                answers[index] = selectedText;
-
-                // Normalize both sides and compare
-                String normalizedSelected = normalizeAnswer(selectedText);
-                String normalizedExpected = normalizeAnswer(q.getAnswer());
-
-                if (!normalizedSelected.isEmpty() && normalizedSelected.equals(normalizedExpected)) {
-                    correctAnswers++;
-                }
-                index++;
+            String userAnswer = "";
+            // safely read a line only if available to avoid NoSuchElementException when input is exhausted
+            if (sc.hasNextLine()) {
+                userAnswer = sc.nextLine();
+            } else {
+                // no more input (e.g., piped input exhausted); treat as blank answer
+                System.out.println();
+                userAnswer = "";
             }
 
-            System.out.println("You got " + correctAnswers + " out of " + (index) + " correct!");
-        } finally {
-            // do not close System.in; closing the scanner would close System.in for the JVM
-            // sc.close();
+            if (userAnswer == null) userAnswer = "";
+            userAnswer = userAnswer.trim();
+
+            // Map single-letter answers (A/B/C/...) to the corresponding option text if possible
+            String selectedText = mapLetterToOption(userAnswer, q.getOptions());
+            if (selectedText == null || selectedText.isEmpty()) {
+                // user may have typed the full option (e.g., "Paris") or the full "A. Paris"
+                selectedText = userAnswer;
+            }
+
+            answers[index] = selectedText;
+
+            // Normalize both sides and compare
+            String normalizedSelected = normalizeAnswer(selectedText);
+            String normalizedExpected = normalizeAnswer(q.getAnswer());
+
+            if (!normalizedSelected.isEmpty() && normalizedSelected.equals(normalizedExpected)) {
+                correctAnswers++;
+            }
+            index++;
         }
+
+        System.out.println("You got " + correctAnswers + " out of " + (index) + " correct!");
     }
 
     private String mapLetterToOption(String userAnswer, String[] options) {
