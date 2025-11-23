@@ -27,8 +27,10 @@ public class QuestionService {
             answers = new String[questions.length];
         }
 
-        int index = 0, correctAnswers = 0;
-        for(Question q : questions){
+        int correctAnswers = 0;
+        int processed = 0;
+        for (int i = 0; i < questions.length; i++) {
+            Question q = questions[i];
             if (q == null) continue; // skip null slots (if any)
 
             System.out.println("-------------------------");
@@ -57,7 +59,8 @@ public class QuestionService {
                 selectedText = userAnswer;
             }
 
-            answers[index] = selectedText;
+            // store the answer aligned with the question index
+            answers[i] = selectedText;
 
             // Normalize both sides and compare
             String normalizedSelected = normalizeAnswer(selectedText);
@@ -66,10 +69,10 @@ public class QuestionService {
             if (!normalizedSelected.isEmpty() && normalizedSelected.equals(normalizedExpected)) {
                 correctAnswers++;
             }
-            index++;
+            processed++;
         }
 
-        System.out.println("You got " + correctAnswers + " out of " + (index) + " correct!");
+        System.out.println("You got " + correctAnswers + " out of " + processed + " correct!");
     }
 
     private String mapLetterToOption(String userAnswer, String[] options) {
