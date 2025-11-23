@@ -16,6 +16,12 @@ public class Question {
         this.options = options;
         this.answer = answer;
     }
+    public Question(String question, String[] options, String answer)
+    {
+        this.question = question;
+        this.options = options;
+        this.answer = answer;
+    }
 
     public int getId() {
         return id;
