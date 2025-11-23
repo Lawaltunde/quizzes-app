@@ -6,12 +6,11 @@ import java.util.Scanner;
 public class QuestionService {
     private QuestionDAO questionDAO;
     private String[] answers;
-    // reuse one scanner for System.in; do not close it
+    // reuse one scanner for System.in
     private final Scanner sc = new Scanner(System.in);
 
     {
         questionDAO = new QuestionDAO();
-        // don't initialize answers here; do it when we know current questions length
         answers = null;
     }
 
